@@ -37,6 +37,7 @@ class Index extends React.Component {
     this.setState(({ enabled }) => {
       return { enabled: !enabled };
     });
+    console.log('Add Script Tags', this.state);
   };
 }
 
