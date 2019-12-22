@@ -34,7 +34,9 @@ app.prepare().then(() => {
         ctx.cookies.set("shopOrigin", shop, {
           httpOnly: false
         });
-        ctx.redirect("/");
+        server.context.client = await handlers.createClient(shop, accessToken);
+
+        await handlers.getSubscriptionUrl(ctx);
       }
     })
   );

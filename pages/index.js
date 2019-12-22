@@ -1,9 +1,8 @@
 import { Button, Card, Form, FormLayout, Layout, Page, SettingToggle, Stack, TextField, TextStyle } from '@shopify/polaris';
+import Products from '../components/products/Products';
 
 class Index extends React.Component {
-  state = {
-    enabled: false,
-  };
+  state = { enabled: true };
 
   render() {
     const { enabled } = this.state;
@@ -13,22 +12,15 @@ class Index extends React.Component {
     return (
       <Page>
         <Layout>
-          <Layout.AnnotatedSection
-            title="Add Script Tags"
-            description="Adds custom script to Product Page"
-          >
-            <SettingToggle
-              action={{
-                content: contentStatus,
-                onAction: this.handleToggle,
-              }}
-              enabled={enabled}
-            >
-              This setting is{' '}
+          <Layout.AnnotatedSection title="Add Script Tags" description="Adds custom script to shop">
+            <SettingToggle action={{ content: contentStatus, onAction: this.handleToggle }} enabled={enabled}>
+              <TextStyle>This setting is{' '}</TextStyle>
               <TextStyle variation="strong">{textStatus}</TextStyle>.
             </SettingToggle>
           </Layout.AnnotatedSection>
         </Layout>
+        
+        <Products />
       </Page>
     );
   }
@@ -37,7 +29,7 @@ class Index extends React.Component {
     this.setState(({ enabled }) => {
       return { enabled: !enabled };
     });
-    console.log('Add Script Tags', this.state);
+    console.log(this.state);
   };
 }
 

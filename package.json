@@ -39,6 +39,7 @@
     "koa-session": "^5.12.3",
     "next": "^8.1.0",
     "next-env": "^1.1.0",
+    "oneezy-css": "^1.1.0",
     "react": "^16.10.1",
     "react-apollo": "^2.5.8",
     "react-dom": "^16.10.1"

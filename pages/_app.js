@@ -5,6 +5,7 @@ import { AppProvider } from "@shopify/polaris";
 import { Provider } from "@shopify/app-bridge-react";
 import Cookies from "js-cookie";
 import "@shopify/polaris/styles.css";
+import "oneezy-css/dist/oneezy-css.min.css";
 import translations from "@shopify/polaris/locales/en.json";
 
 const client = new ApolloClient({
