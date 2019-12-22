@@ -30,7 +30,7 @@ class WriteScriptTags extends Component {
     return (
       <Fragment>
         <Mutation mutation={WRITE_SCRIPTTAGS}>
-          {scriptTagCreate  => <button onClick={scriptTagCreate}></button> }
+          {scriptTagCreate  => <button onClick={scriptTagCreate}>Add Script Tags</button> }
         </Mutation>
       </Fragment>
     )

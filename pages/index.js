@@ -1,5 +1,6 @@
 import { Button, Card, Form, FormLayout, Layout, Page, SettingToggle, Stack, TextField, TextStyle } from '@shopify/polaris';
 import Products from '../components/products/Products';
+import WriteScriptTags from '../components/scripttags/WriteScriptTags';
 
 class Index extends React.Component {
   state = { enabled: true };
@@ -19,8 +20,7 @@ class Index extends React.Component {
             </SettingToggle>
           </Layout.AnnotatedSection>
         </Layout>
-        
-        <Products />
+        {/* <WriteScriptTags /> */}
       </Page>
     );
   }
@@ -29,7 +29,6 @@ class Index extends React.Component {
     this.setState(({ enabled }) => {
       return { enabled: !enabled };
     });
-    console.log(this.state);
   };
 }
 
