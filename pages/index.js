@@ -1,21 +1,27 @@
-import { Layout, Page, SettingToggle, TextStyle } from '@shopify/polaris';
-import { Query, Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
+import { Layout, Page, SettingToggle, TextStyle } from "@shopify/polaris";
+import { Query, Mutation } from "react-apollo";
+import gql from "graphql-tag";
 
 class Index extends React.Component {
   state = { enabled: true };
 
   render() {
     const { enabled } = this.state;
-    const contentStatus = enabled ? 'Disable' : 'Enable';
-    const textStatus = enabled ? 'enabled' : 'disabled';
+    const contentStatus = enabled ? "Disable" : "Enable";
+    const textStatus = enabled ? "enabled" : "disabled";
 
     return (
       <Page>
         <Layout>
-          <Layout.AnnotatedSection title="Add Script Tags" description="Adds custom script to shop">
-            <SettingToggle action={{ content: contentStatus, onAction: this.handleToggle }} enabled={enabled}>
-              <TextStyle>This setting is{' '}</TextStyle>
+          <Layout.AnnotatedSection
+            title="Add Script Tags"
+            description="Adds custom script to shop"
+          >
+            <SettingToggle
+              action={{ content: contentStatus, onAction: this.handleToggle }}
+              enabled={enabled}
+            >
+              <TextStyle>This setting is </TextStyle>
               <TextStyle variation="strong">{textStatus}</TextStyle>.
             </SettingToggle>
           </Layout.AnnotatedSection>
@@ -33,41 +39,39 @@ class Index extends React.Component {
 
 export default Index;
 
-
-
-
 /**
 |--------------------------------------------------
 | QUERIES AND MUTATIONS
 |--------------------------------------------------
 */
 const QUERY_SCRIPTTAGS = gql`
-query {
-  scriptTags(first: 5 ){
-    edges {
-      node {
-        id
+  query {
+    scriptTags(first: 5) {
+      edges {
+        node {
+          id
+          src
+          displayScope
+        }
+      }
+    }
+  }
+`;
+
+const WRITE_SCRIPTTAGS = gql`
+  mutation scriptTagCreate($input: ScriptTagInput!) {
+    scriptTagCreate(input: $input) {
+      userErrors {
+        field
+        message
+      }
+      scriptTag {
         src
         displayScope
       }
     }
   }
-}`;
-
-
-const WRITE_SCRIPTTAGS = gql`
-mutation scriptTagCreate($input: ScriptTagInput!) {
-  scriptTagCreate(input: $input) {
-    userErrors {
-      field
-      message
-    }
-    scriptTag {
-      src
-      displayScope
-    }
-  }
-}`;
+`;
 
 /***********************************************************************************
 {
@@ -79,15 +83,16 @@ mutation scriptTagCreate($input: ScriptTagInput!) {
 ************************************************************************************/
 
 const DELETE_SCRIPTTAGS = gql`
-mutation scriptTagDelete($id: ID!) {
-  scriptTagDelete(id: $id) {
-    deletedScriptTagId
-    userErrors {
-      field
-      message
+  mutation scriptTagDelete($id: ID!) {
+    scriptTagDelete(id: $id) {
+      deletedScriptTagId
+      userErrors {
+        field
+        message
+      }
     }
   }
-}`;
+`;
 
 /***********************************************************************************
 {

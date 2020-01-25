@@ -1,4 +1,5 @@
 # Add Script Tags (Shopify Demo App)
+
 A sample Shopify App that demonstrates how to add &lt;script> tags to a page
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
