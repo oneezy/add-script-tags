@@ -38,7 +38,7 @@ class Index extends React.Component {
       this.setState({
         loading: nextProps.loading,
         enabled: edges.length,
-        scriptId: edges[0].node.id
+        scriptId: edges.length > 0 ? edges[0].node.id : ""
       });
     }
   }
@@ -76,34 +76,37 @@ class Index extends React.Component {
   async handleToggle() {
     const { enabled, scriptId } = this.state;
     const { writeScript, deleteScript } = this.props;
-    if (enabled) {
-      // Enable adding script from API
-      const WRITE_SCRIPTTAGS_VARS = {
-        variables: {
-          input: {
-            src:
-              "https://cdn.shopify.com/s/files/1/0318/4328/7085/files/script.js?4",
-            displayScope: "ALL"
-          }
+    this.setState(
+      {
+        enabled: !enabled
+      },
+      async () => {
+        if (this.state.enabled) {
+          // Enable adding script from API
+          const WRITE_SCRIPTTAGS_VARS = {
+            variables: {
+              input: {
+                src:
+                  "https://cdn.shopify.com/s/files/1/0318/4328/7085/files/script.js?4",
+                displayScope: "ALL"
+              }
+            }
+          };
+          const resp = await writeScript(WRITE_SCRIPTTAGS_VARS);
+          console.log("write resp", resp);
+        } else {
+          // Remove script from API
+          console.log("scriptID", scriptId);
+          const DELETE_SCRIPTTAGS_VARS = {
+            variables: {
+              id: scriptId
+            }
+          };
+          const resp = await deleteScript(DELETE_SCRIPTTAGS_VARS);
+          console.log("delete resp", resp);
         }
-      };
-      const resp = await writeScript(WRITE_SCRIPTTAGS_VARS);
-      console.log("write resp", resp);
-    } else {
-      // Remove script from API
-      console.log("scriptID", scriptId);
-      const DELETE_SCRIPTTAGS_VARS = {
-        variables: {
-          id: scriptId
-        }
-      };
-      const resp = await deleteScript(DELETE_SCRIPTTAGS_VARS);
-      console.log("delete resp", resp);
-    }
-
-    this.setState({
-      enabled: !enabled
-    });
+      }
+    );
   }
 }
 
