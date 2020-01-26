@@ -25,7 +25,7 @@ class MyApp extends App {
             config={{
               apiKey: API_KEY,
               shopOrigin: shopOrigin,
-              forceRedirect: true
+              forceRedirect: false
             }}
           >
             <ApolloProvider client={client}>
