@@ -1,14 +1,53 @@
 import { Layout, Page, SettingToggle, TextStyle } from "@shopify/polaris";
-import { Query, Mutation } from "react-apollo";
+import { Query, Mutation, graphql, compose } from "react-apollo";
 import gql from "graphql-tag";
 
+import {
+  QUERY_SCRIPTTAGS,
+  WRITE_SCRIPTTAGS,
+  DELETE_SCRIPTTAGS
+} from "./queries";
+
+function getScript(resp) {
+  if (resp.data.scriptTags.edges.length > 0) {
+    result = resp.data.scriptTags.edges[0];
+  }
+
+  return null;
+}
+
 class Index extends React.Component {
-  state = { enabled: true };
+  constructor(props) {
+    super(props);
+    this.state = {
+      enabled: false,
+      scriptId: "",
+      loading: true
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { loading } = this.state;
+    const { scriptTags = {} } = this.props;
+
+    if (!nextProps.loading) {
+      console.log("done loading");
+      console.log("query scriptTags", nextProps.queryScripts.scriptTags);
+
+      const { edges = [] } = nextProps.queryScripts.scriptTags;
+      this.setState({
+        loading: nextProps.loading,
+        enabled: edges.length,
+        scriptId: edges[0].node.id
+      });
+    }
+  }
 
   render() {
-    const { enabled } = this.state;
+    const { enabled, loading } = this.state;
     const contentStatus = enabled ? "Disable" : "Enable";
     const textStatus = enabled ? "enabled" : "disabled";
+    console.log("props", JSON.stringify(this.props.queryScripts));
 
     return (
       <Page>
@@ -17,8 +56,12 @@ class Index extends React.Component {
             title="Add Script Tags"
             description="Adds custom script to shop"
           >
+            {loading && <span> Loading... </span>}
             <SettingToggle
-              action={{ content: contentStatus, onAction: this.handleToggle }}
+              action={{
+                content: contentStatus,
+                onAction: () => this.handleToggle()
+              }}
               enabled={enabled}
             >
               <TextStyle>This setting is </TextStyle>
@@ -30,72 +73,48 @@ class Index extends React.Component {
     );
   }
 
-  handleToggle = () => {
-    this.setState(({ enabled }) => {
-      return { enabled: !enabled };
-    });
-  };
-}
-
-export default Index;
-
-/**
-|--------------------------------------------------
-| QUERIES AND MUTATIONS
-|--------------------------------------------------
-*/
-const QUERY_SCRIPTTAGS = gql`
-  query {
-    scriptTags(first: 5) {
-      edges {
-        node {
-          id
-          src
-          displayScope
+  async handleToggle() {
+    const { enabled, scriptId } = this.state;
+    const { writeScript, deleteScript } = this.props;
+    if (enabled) {
+      // Enable adding script from API
+      const WRITE_SCRIPTTAGS_VARS = {
+        variables: {
+          input: {
+            src:
+              "https://cdn.shopify.com/s/files/1/0318/4328/7085/files/script.js?4",
+            displayScope: "ALL"
+          }
         }
-      }
+      };
+      const resp = await writeScript(WRITE_SCRIPTTAGS_VARS);
+      console.log("write resp", resp);
+    } else {
+      // Remove script from API
+      console.log("scriptID", scriptId);
+      const DELETE_SCRIPTTAGS_VARS = {
+        variables: {
+          id: scriptId
+        }
+      };
+      const resp = await deleteScript(DELETE_SCRIPTTAGS_VARS);
+      console.log("delete resp", resp);
     }
-  }
-`;
 
-const WRITE_SCRIPTTAGS = gql`
-  mutation scriptTagCreate($input: ScriptTagInput!) {
-    scriptTagCreate(input: $input) {
-      userErrors {
-        field
-        message
-      }
-      scriptTag {
-        src
-        displayScope
-      }
-    }
-  }
-`;
-
-/***********************************************************************************
-{
-  "input": {
-    "src": "https://raw.githack.com/oneezy/add-script-tags/master/pages/script.js", 
-    "displayScope": "ONLINE_STORE" 
+    this.setState({
+      enabled: !enabled
+    });
   }
 }
-************************************************************************************/
 
-const DELETE_SCRIPTTAGS = gql`
-  mutation scriptTagDelete($id: ID!) {
-    scriptTagDelete(id: $id) {
-      deletedScriptTagId
-      userErrors {
-        field
-        message
-      }
-    }
-  }
-`;
-
-/***********************************************************************************
-{
-  "id": "gid://shopify/ScriptTag/110762885208"
-}
-************************************************************************************/
+export default compose(
+  graphql(WRITE_SCRIPTTAGS, {
+    name: "writeScript"
+  }),
+  graphql(DELETE_SCRIPTTAGS, {
+    name: "deleteScript"
+  }),
+  graphql(QUERY_SCRIPTTAGS, {
+    name: "queryScripts"
+  })
+)(Index);
