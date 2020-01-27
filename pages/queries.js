@@ -26,6 +26,7 @@ export const WRITE_SCRIPTTAGS = gql`
         message
       }
       scriptTag {
+        id
         src
         displayScope
       }

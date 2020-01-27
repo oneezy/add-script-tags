@@ -93,6 +93,11 @@ class Index extends React.Component {
             }
           };
           const resp = await writeScript(WRITE_SCRIPTTAGS_VARS);
+          if (resp.data.scriptTagCreate.scriptTag) {
+            this.setState({
+              scriptId: resp.data.scriptTagCreate.scriptTag.id
+            });
+          }
           console.log("write resp", resp);
         } else {
           // Remove script from API
@@ -103,6 +108,11 @@ class Index extends React.Component {
             }
           };
           const resp = await deleteScript(DELETE_SCRIPTTAGS_VARS);
+          if (resp.data) {
+            this.setState({
+              scriptId: ""
+            });
+          }
           console.log("delete resp", resp);
         }
       }
